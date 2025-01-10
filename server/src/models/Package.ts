@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { PackageI } from "../interfaces/Package.interfaces";
 
-const PackageSchema = new Schema(
+const PackageSchema = new Schema<PackageI>(
   {
     trackingID: {
       type: String,
@@ -18,40 +19,43 @@ const PackageSchema = new Schema(
       trim: true,
     },
     tracking: {
-      currentLocation: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      lastUpdate: {
-        type: Date,
-        require: true,
-        default: Date.now,
-      },
-      currentStatus: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      history: [
-        {
-          location: {
-            type: String,
-            required: true,
-            trim: true,
-          },
-          timestamp: {
-            type: Date,
-            require: true,
-            default: Date.now,
-          },
-          status: {
-            type: String,
-            required: true,
-            trim: true,
-          },
+      require: true,
+      type: {
+        currentLocation: {
+          type: String,
+          required: true,
+          trim: true,
         },
-      ],
+        lastUpdate: {
+          type: Date,
+          require: true,
+          default: Date.now,
+        },
+        currentStatus: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        history: [
+          {
+            location: {
+              type: String,
+              required: true,
+              trim: true,
+            },
+            timestamp: {
+              type: Date,
+              require: true,
+              default: Date.now,
+            },
+            status: {
+              type: String,
+              required: true,
+              trim: true,
+            },
+          },
+        ],
+      }
     },
     receiver: {
       name: {
@@ -71,4 +75,4 @@ const PackageSchema = new Schema(
   }
 );
 
-export default model("Package", PackageSchema);
+export default model<PackageI>("Package", PackageSchema);
