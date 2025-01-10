@@ -71,6 +71,19 @@ export const updatePackage = async (req: Request, res: Response) => {
 
     const updatePackage = await packageData.save();
 
+    const { email } = updatePackage.receiver;
+    const transporter = createTransporter();
+    const sendEmail = async () => {
+      await sendMail(
+        transporter,
+        email,
+        `<p><b>Información de su paquete<b/><br/>Estado: ${status}<br />Ubicación: ${location}<br /> No olvide que su código de rastreo es: <b>${updatePackage.trackingID}</b></p>`,
+        `Actualización de paquete`
+      );
+    };
+
+    sendEmail().catch(console.error);
+
     res.status(200).json(updatePackage);
   } catch (error) {
     res.status(500).json({ message: "Error updating package" });
