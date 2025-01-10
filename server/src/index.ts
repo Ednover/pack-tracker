@@ -1,19 +1,22 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import adminRoutes from "./routes/admin.routes";
+import receiverRoutes from "./routes/receiver.routes";
 
 dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT;
-const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_URI = process.env.DATABASE_URI;
 
-app.get("/", (request: Request, response: Response) => {
-  response.status(200).send("Hello World");
-});
+app.use(express.json());
+
+app.use("/api/admin", adminRoutes);
+app.use("/api/receiver", receiverRoutes);
 
 mongoose
-  .connect(DATABASE_URL!)
+  .connect(DATABASE_URI!)
   .then(() => {
     console.log("Connected to batabase");
     app
