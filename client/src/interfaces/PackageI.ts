@@ -38,3 +38,11 @@ export interface PackageFormI {
   size: string;
   receiver: ReceiverI;
 }
+
+export interface ReportsInfoI {
+  packagesCreated: number;
+  preparationPackages: PackageAdminI[];
+  progressPackages: PackageAdminI[];
+  deliveryPackages: PackageAdminI[];
+  listPackages: PackageAdminI[];
+}

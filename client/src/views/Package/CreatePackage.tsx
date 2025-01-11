@@ -71,7 +71,8 @@ const CreatePackage = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      alert("El paquete fue creado correctamente");
+      const result = await response.json();
+      alert(`El paquete fue creado correctamente, el código de rastreo es: ${result}`);
       navigate("/dashboard");
     } catch (err) {
       console.error(err);

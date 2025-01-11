@@ -52,6 +52,7 @@ const Package = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${getCookieToken()}`,
           },
           body: JSON.stringify({
             location,
