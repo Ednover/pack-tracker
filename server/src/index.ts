@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import adminRoutes from "./routes/admin.routes";
 import receiverRoutes from "./routes/receiver.routes";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/receiver", receiverRoutes);
+app.use("/api/auth", authRoutes);
 
 mongoose
   .connect(DATABASE_URI!)
