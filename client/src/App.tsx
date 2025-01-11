@@ -1,11 +1,11 @@
-import './App.css'
+import { Route, Routes } from 'react-router'
+import Home from './views/Home/Home'
 
 function App() {
-
   return (
-    <div>
-      <h1>Pack tracker</h1>
-    </div>
+    <Routes>
+        <Route path="/" element={ <Home /> } />
+      </Routes>
   )
 }
 
