@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PackageAdminI } from "../../interfaces/PackageI";
 import Layout from "../../componets/Layout/Layout";
 import { useNavigate } from "react-router";
+import { getCookieToken } from "../../services/cookies/cookies";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -12,7 +13,14 @@ const Dashboard = () => {
     const fetchPackages = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API}/admin/packages`
+          `${import.meta.env.VITE_API}/admin/packages`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getCookieToken()}`,
+            },
+          }
         );
         const result = await response.json();
         if (!response.ok) {
@@ -83,7 +91,10 @@ const Dashboard = () => {
                 key={index}
                 className="border border-white bg-slate-800 border-x-0 border-b-0 px-2 flex  gap-4 justify-between hover:brightness-90"
               >
-                <div className="hover:cursor-pointer py-3" onClick={() => handleNavigation(packageData._id)}>
+                <div
+                  className="hover:cursor-pointer py-3"
+                  onClick={() => handleNavigation(packageData._id)}
+                >
                   <b>{packageData._id}</b>
                   <p>{packageData.description}</p>
                 </div>

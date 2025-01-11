@@ -3,6 +3,7 @@ import { Params, useParams } from "react-router";
 import { PackageI } from "../../interfaces/PackageI";
 import PackageInfo from "../../componets/PackageInfo/PackageInfo";
 import Layout from "../../componets/Layout/Layout";
+import { getCookieToken } from "../../services/cookies/cookies";
 
 const Package = () => {
   const { id } = useParams<Params>();
@@ -13,7 +14,14 @@ const Package = () => {
     const fetchPackages = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API}/admin/package/${id}`
+          `${import.meta.env.VITE_API}/admin/package/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getCookieToken()}`,
+            },
+          }
         );
         const result = await response.json();
         if (!response.ok) {
@@ -64,8 +72,8 @@ const Package = () => {
 
   const handleSubmit = (isDelivery: boolean) => {
     if (isDelivery) {
-        updatePackage("El paquete ya fue entregado", "Entregado");
-        return;
+      updatePackage("El paquete ya fue entregado", "Entregado");
+      return;
     }
     updatePackage("En carretera Merida-Campeche", "En camino");
   };
