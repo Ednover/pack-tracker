@@ -50,7 +50,7 @@ export const createPackage = async (req: Request, res: Response) => {
       await sendMail(
         transporter,
         email,
-        `<p>Su paquete ya esta en preparación, se código de rastreo es: <b>${trackingID}</b></p>`,
+        `<p>Su paquete ya esta en preparación, su código de rastreo es: <b>${trackingID}</b></p>`,
         "Paquete en preparación"
       );
     };
