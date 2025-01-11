@@ -32,3 +32,9 @@ export interface PackageAdminI {
   tracking: TrackingI;
   receiver: ReceiverI;
 }
+
+export interface PackageFormI {
+  description: string;
+  size: string;
+  receiver: ReceiverI;
+}

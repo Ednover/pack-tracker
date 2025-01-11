@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PackageAdminI } from "../../interfaces/PackageI";
 import Layout from "../../componets/Layout/Layout";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { getCookieToken } from "../../services/cookies/cookies";
 
 const Dashboard = () => {
@@ -47,6 +47,10 @@ const Dashboard = () => {
         `${import.meta.env.VITE_API}/admin/packages/${id}/update`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getCookieToken()}`,
+          },
         }
       );
 
@@ -79,7 +83,17 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="max-w-4xl md:w-full md:mx-auto mx-2">
-        <h1 className="text-2xl text-center mb-4">Lista de paquetes</h1>
+        <div className="flex flex-wrap justify-between mb-4">
+          <h1 className="sm:text-2xl text-xl text-center text-wrap">
+            Lista de paquetes
+          </h1>
+          <Link
+            to={"/create-package"}
+            className="bg-green-600 w-fit h-fit px-3 py-1 hover:brightness-90"
+          >
+            Crear
+          </Link>
+        </div>
         {loading ? (
           <div className="text-center">Cargando...</div>
         ) : !packages.length ? (
@@ -101,7 +115,7 @@ const Dashboard = () => {
                 <div className="flex flex-wrap gap-2 py-3 items-center justify-end text-end">
                   <p>{packageData.tracking.currentStatus}</p>
                   <button
-                    className="bg-red-600 w-fit h-fit px-3 py-1 hover:brightness-90 z-20"
+                    className="bg-red-600 w-fit h-fit px-3 py-1 hover:brightness-90"
                     onClick={() => handleDelete(packageData._id)}
                   >
                     Eliminar

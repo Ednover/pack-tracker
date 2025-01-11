@@ -4,6 +4,7 @@ import Login from "./views/Login/Login";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Package from "./views/Package/Package";
 import RequireAuth from "./componets/RequireAuth/RequireAuth";
+import CreatePackage from "./views/Package/CreatePackage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route element={<RequireAuth />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/package/:id" element={<Package />} />
+        <Route path="/create-package" element={<CreatePackage />} />
       </Route>
     </Routes>
   );

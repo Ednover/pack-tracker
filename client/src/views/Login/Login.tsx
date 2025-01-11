@@ -2,6 +2,7 @@ import { useState } from "react";
 import { UserI } from "../../interfaces/UserI";
 import { setCookieToken } from "../../services/cookies/cookies";
 import { useNavigate } from "react-router";
+import Input from "../../componets/Input/Input";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,10 +24,10 @@ const Login = () => {
     e.preventDefault();
     setIsSubmitting(true);
     let message = "";
+    if (!user.password) message = "El campo de contraseña está vacío";
+    if (!user.username) message = "El campo de usuario está vacío";
     if (!user.username && !user.password)
       message = "Los campos de usuario y contraseña están vacíos";
-    if (!user.username) message = "El campo de usuario está vacío";
-    if (!user.password) message = "El campo de contraseña está vacío";
 
     if (message) {
       alert(message);
@@ -64,36 +65,25 @@ const Login = () => {
 
   return (
     <div className="h-screen w-full flex flex-wrap justify-center items-center">
-      <form onSubmit={handleSubmit} className="border border-white p-4 flex flex-col items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="border border-white p-4 flex flex-col items-center"
+      >
         <h1 className="text-2xl text-center">Inicio de sesión</h1>
-        <div className="m-2 flex flex-col">
-          <label className="text-center" htmlFor="">
-            Usuario
-          </label>
-          <input
-            className="px-2 py-1 w-fit"
-            type="text"
-            name="username"
-            value={user.username}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="m-2 flex flex-col">
-          <label className="text-center" htmlFor="">
-            Contraseña
-          </label>
-          <input
-            className="px-2 py-1 w-fit"
-            type="password"
-            name="password"
-            value={user.password}
-            onChange={handleChange}
-          />
-        </div>
-        {}
-        <button
-          className="bg-yellow-600 w-fit px-3 py-1 m-2 hover:brightness-90"
-        >
+        <Input
+          name="username"
+          onChange={handleChange}
+          title="Usuario"
+          value={user.username}
+        />
+        <Input
+          name="password"
+          type="password"
+          onChange={handleChange}
+          title="Contraseña"
+          value={user.password}
+        />
+        <button className="bg-yellow-600 w-fit px-3 py-1 m-2 hover:brightness-90">
           {isSubmitting ? "Cargando..." : "Iniciar sesión"}
         </button>
       </form>
