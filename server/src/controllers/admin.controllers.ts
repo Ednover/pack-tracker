@@ -13,6 +13,20 @@ export const getPackages = async (req: Request, res: Response) => {
   }
 };
 
+export const getPackageByID = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const packageData = await Package.findById(id);
+    if (!packageData) {
+      res.status(404).json({ message: "Package not found" });
+      return;
+    }
+    res.status(200).json(packageData);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching package" });
+  }
+};
+
 export const createPackage = async (req: Request, res: Response) => {
   try {
     const trackingID = generateTrackingId();
@@ -77,7 +91,7 @@ export const updatePackage = async (req: Request, res: Response) => {
       await sendMail(
         transporter,
         email,
-        `<p><b>Información de su paquete<b/><br/>Estado: ${status}<br />Ubicación: ${location}<br /> No olvide que su código de rastreo es: <b>${updatePackage.trackingID}</b></p>`,
+        `<p><b>Información de su paquete</b><br/>Estado: ${status}<br />Ubicación: ${location}<br /> No olvide que su código de rastreo es: <b>${updatePackage.trackingID}</b></p>`,
         `Actualización de paquete`
       );
     };
