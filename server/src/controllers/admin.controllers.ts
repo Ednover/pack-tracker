@@ -3,6 +3,7 @@ import Package from "../models/Package";
 import { generateTrackingId } from "../utils/generateID";
 import { createTransporter, sendMail } from "../utils/emailer";
 import { PackageI, TrackingI } from "../interfaces/Package.interfaces";
+import { packageStatus } from "../utils/packageStatus";
 
 export const getPackages = async (req: Request, res: Response) => {
   try {
@@ -56,7 +57,7 @@ export const createPackage = async (req: Request, res: Response) => {
 
     sendEmail().catch(console.error);
 
-    res.status(201).json(newPackage);
+    res.status(201).json(newPackage.trackingID);
   } catch (error) {
     res.status(500).json({ message: "Error creating package" });
   }
@@ -115,5 +116,52 @@ export const deletePackage = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Package deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting package" });
+  }
+};
+
+export const generateReport = async (req: Request, res: Response) => {
+  try {
+    const { date } = req.params;
+
+    const CURRENTTIME = 6 * 60 * 60 * 1000;
+    const DAY_HOURS = 24 * 60 * 60 * 1000
+
+    const startOfDay = new Date(date);
+    startOfDay.setTime(startOfDay.getTime() + CURRENTTIME);
+    const endOfDay = new Date(date);
+    endOfDay.setTime(startOfDay.getTime() + DAY_HOURS);
+
+    const packagesCreated = await Package.countDocuments({
+      createdAt: { $gte: startOfDay, $lte: endOfDay },
+    });
+    const listPackages = await Package.find({
+      "tracking.lastUpdate": { $gte: startOfDay, $lte: endOfDay },
+      createdAt: { $gte: startOfDay, $lte: endOfDay },
+    })
+    const preparationPackages = await Package.find({
+      "tracking.currentStatus": packageStatus.in_preparation,
+      "tracking.lastUpdate": { $gt: startOfDay, $lt: endOfDay },
+    });
+    const progressPackages = await Package.find({
+      "tracking.currentStatus": packageStatus.in_progress,
+      "tracking.lastUpdate": { $gte: startOfDay, $lt: endOfDay },
+    });
+    const deliveryPackages = await Package.find({
+      "tracking.currentStatus": packageStatus.delivery,
+      "tracking.lastUpdate": { $gte: startOfDay, $lt: endOfDay },
+    });
+
+    const report = {
+      packagesCreated,
+      preparationPackages,
+      progressPackages,
+      deliveryPackages,
+      listPackages
+    };
+
+    res.status(200).json(report);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error generating report" });
   }
 };
