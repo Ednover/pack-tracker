@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 import adminRoutes from "./routes/admin.routes";
 import receiverRoutes from "./routes/receiver.routes";
 
@@ -10,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT;
 const DATABASE_URI = process.env.DATABASE_URI;
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/admin", adminRoutes);
