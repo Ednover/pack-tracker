@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { PackageI } from "../interfaces/Package.interfaces";
+import { PackageDBI } from "../interfaces/Package.interfaces";
 
-const PackageSchema = new Schema<PackageI>(
+const PackageSchema = new Schema<PackageDBI>(
   {
     trackingID: {
       type: String,
@@ -75,4 +75,4 @@ const PackageSchema = new Schema<PackageI>(
   }
 );
 
-export default model<PackageI>("Package", PackageSchema);
+export default model<PackageDBI>("Package", PackageSchema);

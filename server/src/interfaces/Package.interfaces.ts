@@ -6,6 +6,15 @@ export interface PackageI {
   receiver: ReceiverI;
 }
 
+export interface PackageDBI {
+  _id: string;
+  trackingID: string;
+  description: string;
+  size: string;
+  tracking: TrackingI;
+  receiver: ReceiverI;
+}
+
 export interface TrackingI {
   currentLocation: string;
   currentStatus: string;

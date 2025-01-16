@@ -1,14 +1,21 @@
 import { Request, Response } from "express";
-import Package from "../models/Package";
+import Package from "../models/package.models";
 import { generateTrackingId } from "../utils/generateID";
 import { createTransporter, sendMail } from "../utils/emailer";
-import { PackageI, TrackingI } from "../interfaces/Package.interfaces";
+import {
+  PackageDBI,
+  PackageI,
+  TrackingI,
+} from "../interfaces/Package.interfaces";
 import { packageStatus } from "../utils/packageStatus";
+import { mapToPackageAdminDTO } from "../dtos/packageAdmin.dtos";
+import { mapToReportDTO } from "../dtos/report.dtos";
 
 export const getPackages = async (req: Request, res: Response) => {
   try {
-    const packages = await Package.find();
-    res.status(200).json(packages);
+    const packages: PackageDBI[] = await Package.find();
+    const mappedPackages = packages.map(mapToPackageAdminDTO);
+    res.status(200).json(mappedPackages);
   } catch (error) {
     res.status(500).json({ message: "Error fetching packages" });
   }
@@ -17,12 +24,13 @@ export const getPackages = async (req: Request, res: Response) => {
 export const getPackageByID = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const packageData = await Package.findById(id);
+    const packageData: PackageDBI | null = await Package.findById(id);
     if (!packageData) {
       res.status(404).json({ message: "Package not found" });
       return;
     }
-    res.status(200).json(packageData);
+    const mappedPackage = mapToPackageAdminDTO(packageData);
+    res.status(200).json(mappedPackage);
   } catch (error) {
     res.status(500).json({ message: "Error fetching package" });
   }
@@ -42,7 +50,7 @@ export const createPackage = async (req: Request, res: Response) => {
       tracking,
       ...req.body,
     };
-    const newPackage = await Package.create(packageData);
+    const newPackage: PackageDBI = await Package.create(packageData);
 
     const { email } = req.body.receiver;
     const transporter = createTransporter();
@@ -84,7 +92,9 @@ export const updatePackage = async (req: Request, res: Response) => {
     packageData.tracking.currentStatus = status;
     packageData.tracking.lastUpdate = new Date();
 
-    const updatePackage = await packageData.save();
+    const updatePackage: PackageDBI = await packageData.save();
+
+    const mappedPackage = mapToPackageAdminDTO(packageData);
 
     const { email } = updatePackage.receiver;
     const transporter = createTransporter();
@@ -99,7 +109,7 @@ export const updatePackage = async (req: Request, res: Response) => {
 
     sendEmail().catch(console.error);
 
-    res.status(200).json(updatePackage);
+    res.status(200).json(mappedPackage);
   } catch (error) {
     res.status(500).json({ message: "Error updating package" });
   }
@@ -124,7 +134,7 @@ export const generateReport = async (req: Request, res: Response) => {
     const { date } = req.params;
 
     const CURRENTTIME = 6 * 60 * 60 * 1000;
-    const DAY_HOURS = 24 * 60 * 60 * 1000
+    const DAY_HOURS = 24 * 60 * 60 * 1000;
 
     const startOfDay = new Date(date);
     startOfDay.setTime(startOfDay.getTime() + CURRENTTIME);
@@ -134,32 +144,32 @@ export const generateReport = async (req: Request, res: Response) => {
     const packagesCreated = await Package.countDocuments({
       createdAt: { $gte: startOfDay, $lte: endOfDay },
     });
-    const listPackages = await Package.find({
+    const listPackages: PackageDBI[] = await Package.find({
       "tracking.lastUpdate": { $gte: startOfDay, $lte: endOfDay },
       createdAt: { $gte: startOfDay, $lte: endOfDay },
-    })
-    const preparationPackages = await Package.find({
+    });
+    const preparationPackages: PackageDBI[] = await Package.find({
       "tracking.currentStatus": packageStatus.in_preparation,
       "tracking.lastUpdate": { $gt: startOfDay, $lt: endOfDay },
     });
-    const progressPackages = await Package.find({
+    const progressPackages: PackageDBI[] = await Package.find({
       "tracking.currentStatus": packageStatus.in_progress,
       "tracking.lastUpdate": { $gte: startOfDay, $lt: endOfDay },
     });
-    const deliveryPackages = await Package.find({
+    const deliveryPackages: PackageDBI[] = await Package.find({
       "tracking.currentStatus": packageStatus.delivery,
       "tracking.lastUpdate": { $gte: startOfDay, $lt: endOfDay },
     });
 
-    const report = {
+    const mappedReport = mapToReportDTO({
       packagesCreated,
       preparationPackages,
       progressPackages,
       deliveryPackages,
-      listPackages
-    };
+      listPackages,
+    });
 
-    res.status(200).json(report);
+    res.status(200).json(mappedReport);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error generating report" });
