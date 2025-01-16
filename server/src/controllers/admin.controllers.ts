@@ -74,7 +74,7 @@ export const createPackage = async (req: Request, res: Response) => {
 export const updatePackage = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { location, status } = req.body;
+    const { location, status, datetime } = req.body;
     const packageData = await Package.findById(id);
 
     if (!packageData) {
@@ -90,7 +90,7 @@ export const updatePackage = async (req: Request, res: Response) => {
 
     packageData.tracking.currentLocation = location;
     packageData.tracking.currentStatus = status;
-    packageData.tracking.lastUpdate = new Date();
+    packageData.tracking.lastUpdate = datetime ? new Date(datetime) : new Date();
 
     const updatePackage: PackageDBI = await packageData.save();
 

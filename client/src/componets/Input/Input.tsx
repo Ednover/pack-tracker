@@ -2,6 +2,8 @@ interface InputProps {
   title: string;
   value: string;
   name: string;
+  className?: string;
+  bgColor?: string;
   type?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -11,6 +13,8 @@ const Input: React.FC<InputProps> = ({
   value,
   name,
   title,
+  className = "",
+  bgColor = "black",
   type = "text",
 }) => {
   return (
@@ -19,7 +23,8 @@ const Input: React.FC<InputProps> = ({
         {title}
       </label>
       <input
-        className="px-2 py-1 w-fit"
+        className={`px-2 py-1 w-fit border border-black ${className}`}
+        style={{ backgroundColor: bgColor }}
         type={type}
         name={name}
         value={value}

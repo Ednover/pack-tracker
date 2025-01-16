@@ -24,13 +24,13 @@ const ListPackages: React.FC<ListPackagesProps> = ({
           className="border border-white bg-slate-800 border-x-0 border-b-0 px-2 flex  gap-4 justify-between hover:brightness-90"
         >
           <div
-            className="hover:cursor-pointer py-3"
+            className="hover:cursor-pointer hover:underline py-3 w-full"
             onClick={() => handleNavigation(packageData._id)}
           >
             <b>{packageData._id}</b>
             <p>{packageData.description}</p>
           </div>
-          <div className="flex flex-wrap gap-2 py-3 items-center justify-end text-end">
+          <div className="flex sm:flex-nowrap flex-wrap gap-2 py-3 items-center justify-end sm:text-nowrap text-end">
             <p>{packageData.tracking.currentStatus}</p>
             {handleDelete ? (
               <button
